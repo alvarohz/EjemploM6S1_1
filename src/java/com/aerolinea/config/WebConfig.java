@@ -16,7 +16,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 
 @Configuration
 @EnableWebMvc
@@ -52,7 +51,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
       dataSource.setPassword("admin");
  
       return dataSource;
-   }
+    }
     
 //    @Bean
 //public TilesConfigurer tilesConfigurer() {

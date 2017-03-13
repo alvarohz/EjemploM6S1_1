@@ -14,5 +14,6 @@
     <mapping class="com.aerolinea.entidad.Avion"/>
     <mapping class="com.aerolinea.entidad.Usuario"/>
     <mapping class="com.aerolinea.entidad.Pais"/>
+    
   </session-factory>
 </hibernate-configuration>

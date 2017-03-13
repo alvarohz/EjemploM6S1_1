@@ -9,31 +9,60 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UsuarioDaoImpl  implements UsuarioDao{
 
+    @Autowired
+    private SessionFactory sessionFactory;
+    
     @Override
     public void guardarUsuario(Usuario u) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session s = sessionFactory.openSession();
+        try {
+            s.beginTransaction();
+            s.saveOrUpdate(u);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            s.getTransaction().rollback();
+            System.out.println(e.getMessage());
+        }finally{s.close();}
     }
 
     @Override
     public List<Usuario> consultarUsuarios() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Usuario> lista;
+        Session s = sessionFactory.openSession();
+        try {
+            s.beginTransaction();
+            Query q = s.createQuery("select u from Usuario u join fetch u.pais"
+                    + " join fetch u.rol");
+            lista=q.list();
+            
+            s.getTransaction().commit();
+            
+            return lista;
+        } catch (Exception e) {
+            return null;
+        }finally{s.close();}
+        
     }
 
     @Override
     public Usuario validarUsuario(Usuario u) {
         Usuario usuario=null;
-        Session s = HibernateUtil.getSessionFactory().openSession();
+        Session s = sessionFactory.openSession();
         try {
-            Query q=s.createQuery("select u from Usuario u "
+            s.beginTransaction();
+            Query q=s.createQuery("select u from Usuario u"
                     + " where idusuario=:usuario and clave=:clave");
             q.setParameter("usuario", u.getIdusuario());
             q.setParameter("clave", sha1(u.getClave()));
             usuario=(Usuario)q.uniqueResult();
+            s.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }finally{
@@ -44,12 +73,32 @@ public class UsuarioDaoImpl  implements UsuarioDao{
 
     @Override
     public List<Rol> getRoles() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Rol> lista;
+        Session s = sessionFactory.openSession();
+        try {
+            s.beginTransaction();
+            Query q = s.createQuery("from Rol");
+            lista=q.list();
+            s.getTransaction().commit();
+            return lista;
+        } catch (Exception e) {
+            return null;
+        }finally{s.close();}
     }
 
     @Override
     public List<Pais> getPaises() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Pais> lista;
+        Session s = sessionFactory.openSession();
+        try {
+            s.beginTransaction();
+            Query q = s.createQuery("from Pais");
+            lista=q.list();
+            s.getTransaction().commit();
+            return lista;
+        } catch (Exception e) {
+            return null;
+        }finally{s.close();}
     }
 
     @Override
@@ -62,7 +111,7 @@ public class UsuarioDaoImpl  implements UsuarioDao{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    static String sha1(String input) throws NoSuchAlgorithmException {
+    public static String sha1(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA1");
         byte[] result = mDigest.digest(input.getBytes());
         StringBuffer sb = new StringBuffer();

@@ -10,12 +10,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ControlIndex {
-    @RequestMapping(value="/", method=GET)
+    @RequestMapping(value="/hola", method=GET)
     public ModelAndView mostrarIndex(@RequestParam("texto")String texto){
         ModelAndView mv = new ModelAndView("index");
         mv.addObject("mensaje", "Hola "+ texto);
         return mv;
     }
+    
     @RequestMapping("/home/{texto}")
     public ModelAndView mostrarIndex2(@PathVariable("texto")String texto){
         ModelAndView mv = new ModelAndView("index");
@@ -26,5 +27,11 @@ public class ControlIndex {
     public String mostrarHome(){
         return "index";
     }
+    
+    @RequestMapping("/")
+    public String mostrarIndex2(){
+        return "index";
+    }
+   
     
 }
